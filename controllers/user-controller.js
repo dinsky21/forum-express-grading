@@ -1,7 +1,8 @@
 const bcrypt = require('bcryptjs')
-const { User } = require('../models')
+const { User, Restaurant, Comment } = require('../models')
 // const { localFileHandler } = require('../helpers/file-helper')
-const {imgurFileHandler } = require('../helpers/file-helper')
+const { imgurFileHandler } = require('../helpers/file-helper')
+const helper = require('../helpers/auth-helpers')
 
 const userController = {
   signUpPage: (req, res) => {
@@ -33,18 +34,18 @@ const userController = {
   },
   logout: (req, res) => {
     req.flash('success_messages', '登出成功！')
-    req.logout(function(err) {
-			if (err) { return next(err); }
-			res.redirect('/');
-		});
+    req.logout()
+    res.redirect('/')
   },
   getUser: (req, res, next) => {
-    // const userId = req.user.id
-    return User.findByPk(req.params.id)
+    return User.findByPk(req.params.id, {
+      include: [
+        { model: Comment, include: Restaurant }]
+    })
       .then(user => {
-        console.log(user.toJSON())
         if (!user) throw new Error('使用者不存在')
-        res.render('users/profile', { user: user.toJSON() })
+        const userJson = Object.assign({}, user.toJSON(), { currentUser: helper.getUser(req) })
+        res.render('users/profile', { user: userJson })
       })
       .catch(err => next(err))
   },
