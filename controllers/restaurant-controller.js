@@ -53,15 +53,27 @@ const restaurantController = {
         const restJSON = restaurant.toJSON()
         // restJSON.commentCounts = restJSON.Comments.length
         res.render('dashboard', { restaurant: restJSON })
+      }).catch(err => next(err))
+  },
+  getFeeds: (req, res, next) => {
+    return Promise.all([
+      Restaurant.findAll({
+        limit: 10,
+        order: [['createdAt', 'DESC'], ['id', 'ASC']],
+        include: [Category],
+        raw: true,
+        nest: true
+      }),
+      Comment.findAll({
+        limit: 10,
+        order: [['createdAt', 'DESC']],
+        include: [User, Restaurant],
+        raw: true,
+        nest: true
       })
-    // return Restaurant.findByPk(req.params.id, {
-    //   include: Category
-    // })
-    //   .then(restaurant => {
-    //     if (!restaurant) throw new Error("Restaurant didn't exist!")
-    //     res.render('dashboard', { restaurant: restaurant.toJSON() })
-    //   })
-    //   .catch(err => next(err))
+    ]).then(([restaurants, comments]) => {
+      res.render('feeds', { restaurants, comments })
+    }).catch(err => next(err))
   }
 }
 module.exports = restaurantController
