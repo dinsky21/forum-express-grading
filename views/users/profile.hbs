@@ -1,13 +1,18 @@
-<div class="card mb-3 mx-auto" style="max-width: 80%;">
-  <div class="row g-0">
-    <div class="col-md-6">
+<div class="container mb-3 mx-auto">
+  <div class="row border border-primary rounded">
+    <div class="col-md-4">
       <img src="{{user.image}}" class="m-3" width="300px">
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
       <div class="card-body">
 
         <h5>{{user.name}}</h5>
         <p>{{user.email}}</p>
+				<p>{{user.Comments.length}} Comments on Restaurants</p>
+				<p>{{user.FavoritedRestaurants.length}} Favorite Restaurants</p>
+				<p>{{user.Followers.length}} Followers</p>
+				<p>Following {{user.Followings.length}} users</p>
+
 				{{#ifCond user.currentUser.id user.id}}
         <a href="/users/{{user.id}}/edit" class="btn btn-primary">edit</a>
 				{{/ifCond}}
@@ -16,20 +21,83 @@
 			
     </div>
   </div>
-	
-	<div class="row mt-3">
-		<h5 class="m-1">{{user.Comments.length}} Comments on Restaurants</h5>
+	<div class="row">
+    <div class="col-4">
+      {{!-- Followings --}}
+      <div class="row mt-3 mx-3 border border-secondary rounded">
+        {{#if user.Followings}}
+        <p class="border-bottom border-secondary py-2 rounded ">Following {{user.Followings.length}} users
+        </p>
+        <div class="row d-inline-flex p-2">
+          {{#each user.Followings}}
+          <div class="col-3 mb-3">
+            <a class="m-3" href="/users/{{this.id}}">
+              <img src="{{this.image}}" width="60px" height="60px">
+            </a>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="border-bottom border-secondary py-2 bg-secondary text-light rounded ">Not following any user</p>
+        {{/if}}
+      </div>
+      {{!-- Followers --}}
+      <div class="row mt-3 mx-3 border border-secondary rounded">
+        {{#if user.Followers}}
+        <p class="border-bottom border-secondary py-2 rounded">{{user.Followers.length}}
+            Followers :
+        </p>
+        <div class="row d-inline-flex p-2">
+          {{#each user.Followers}}
+          <div class="col-3 mb-3">
+            <a class="m-3" href="/users/{{this.id}}">
+              <img class="img" src="{{this.image}}" width="60px" height="60px">
+            </a>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="border-bottom border-secondary py-2 rounded ">No follower yet</p>
+        {{/if}}
+      </div>
+    </div>
+
+	<div class="col-8">
 		<!-- commented restaurants -->
-		{{#if user.Comments}}
-		{{#each user.Comments}}
-		<div class="col">
-			<a href="/restaurants/{{this.Restaurant.id}}">
-				<img src="{{this.Restaurant.image}}" class="p-2" width="150px"">
-			</a>
+		<div class="row mt-3 mx-3 border border-secondary rounded">
+			<p class="border-bottom border-secondary py-2 rounded">{{user.Comments.length}} Comments on Restaurants</p>
+			<div class="row d-inline-flex p-2">
+				{{#if user.Comments}}
+				{{#each user.Comments}}
+					<div class="col-3 mb-3">
+						<a href="/restaurants/{{this.Restaurant.id}}">
+							<img src="{{this.Restaurant.image}}" class="p-2" width="150px"">
+						</a>
+					</div>
+				{{/each}}
+				{{else}}
+				<h6 class="border-bottom border-secondary py-2 rounded">No Comments Yet!</h6>
+				{{/if}}
+			</div>
 		</div>
-		{{/each}}
-		{{else}}
-	<h6 class="m-2">No Comments Yet!</h6>
-	{{/if}}
+		<div class="row mt-3 mx-3 border border-secondary rounded">
+			<p class="border-bottom border-secondary py-2 rounded">{{user.FavoritedRestaurants.length}} Favorite Restaurants</p>
+			<!-- favorited restaurants -->
+			<div class="row d-inline-flex p-2">
+				{{#if user.FavoritedRestaurants}}
+				{{#each user.FavoritedRestaurants}}
+				
+					<div class="col-3 mb-3">
+						<a href="/restaurants/{{this.id}}">
+							<img src="{{this.image}}" class="p-2" width="150px"">
+						</a>
+					</div>
+				
+				{{/each}}
+				{{else}}
+				<h6 class="border-bottom border-secondary py-2 rounded">No Favorite Yet!</h6>
+				{{/if}}
+			</div>
+		</div>
 	</div>
 </div>
