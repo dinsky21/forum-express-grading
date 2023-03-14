@@ -1,6 +1,6 @@
 // const { restart } = require('nodemon')
-const {imgurFileHandler } = require('../helpers/file-helper')
-const { Restaurant, User, Category } = require('../models')
+const {imgurFileHandler } = require('../../helpers/file-helper')
+const { Restaurant, User, Category } = require('../../models')
 
 const adminController = {
 
