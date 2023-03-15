@@ -3,11 +3,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const path = require('path')
 const express = require('express')
-const { pages } = require('./routes')
+const { pages,apis } = require('./routes')
 const handlebars = require('express-handlebars')
 const app = express()
 const port = process.env.PORT || 3000
-// const db = require('./models')
 const flash = require('connect-flash')
 const session = require('express-session')
 const SESSION_SECRET = 'secret'
@@ -32,6 +31,8 @@ app.use((req, res, next) => {
   res.locals.user = getUser(req)
   next()
 })
+
+app.use('/api', apis)
 app.use(pages)
 
 app.listen(port, () => {
