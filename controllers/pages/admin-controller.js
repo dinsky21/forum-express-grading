@@ -6,7 +6,7 @@ const adminServices = require('../../services/admin-services')
 const adminController = {
 
   getRestaurants: (req, res, next) => {
-    adminServices.getRestaurants((req, (err, restaurants) => err ? next(err) : res.render("admin/restaurants",restaurants)))
+    adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))
   },
   createRestaurant: (req, res, next) => {
     return Category.findAll({
@@ -80,17 +80,12 @@ const adminController = {
       .catch(err => next(err))
   },
   deleteRestaurant: (req, res, next) => {
-    Restaurant.findByPk(req.params.id)
-      .then(restaurant => {
-        if (!restaurant) throw new Error("Restaurant doesn't exist!")
-        return restaurant.destroy()
-      })
-      .then(() => {
-        req.flash('success_messages', 'restaurant was deleted successfully')
-        res.redirect('/admin/restaurants')
-      })
-      .catch(err => next(err))
-  },
+    adminServices.deleteRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      req.session.deletedData = data
+      return res.redirect('/admin/restaurants')
+    })
+  },//req.flash('success_messages', 'restaurant was deleted successfully')  不知道要放哪裡
   getUsers: (req, res, next) => {
     return User.findAll({
       raw: true
