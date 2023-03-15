@@ -7,7 +7,7 @@ module.exports = {
       { type: queryInterface.sequelize.QueryTypes.SELECT }
     )
 		const users = await queryInterface.sequelize.query('SELECT id FROM Users;', { type: queryInterface.sequelize.QueryTypes.SELECT })
-		await queryInterface.bulkInsert('Comments', Array.from({length: 10}, () => ({
+		await queryInterface.bulkInsert('Comments', Array.from({length: 20}, () => ({
 			text: faker.lorem.text(20),
 			created_at: new Date(),
       updated_at: new Date(),
