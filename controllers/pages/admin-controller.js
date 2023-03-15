@@ -1,5 +1,5 @@
 // const { restart } = require('nodemon')
-const {imgurFileHandler } = require('../../helpers/file-helper')
+const {imgurFileHandler } = require('../../helpers/file-helpers')
 const { Restaurant, User, Category } = require('../../models')
 const adminServices = require('../../services/admin-services')
 
@@ -16,19 +16,12 @@ const adminController = {
       .catch(err => next(err))
   },
   postRestaurant: (req, res, next) => {
-    const { name, tel, address, openingHours, description, categoryId } = req.body
-    if (!name) throw new Error('Restaurant name is required!')
-
-    const { file } = req
-    imgurFileHandler(file).then(filePath => {
-      return Restaurant.create({
-        name, tel, address, openingHours, description, image: filePath || null, categoryId
-      })
+    adminServices.postRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', 'restaurant was successfully created')
+      req.session.createdData = data
+      return res.redirect('/admin/restaurants')
     })
-      .then(() => {
-        req.flash('success_messages', 'restaurant was created successfully')
-        res.redirect('/admin/restaurants')
-      }).catch(err => next(err))
   },
   getRestaurant: (req, res, next) => {
     Restaurant.findByPk(req.params.id, {
