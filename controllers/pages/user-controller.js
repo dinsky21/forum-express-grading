@@ -1,30 +1,38 @@
 const bcrypt = require('bcryptjs')
 const { Followship, Like, Restaurant, Favorite, User, Comment } = require('../../models')
-// const { localFileHandler } = require('../helpers/file-helper')
 const { imgurFileHandler } = require('../../helpers/file-helpers')
 const helper = require('../../helpers/auth-helpers')
+const userServices = require('../../services/user-services')
 
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')
   },
-  signUp: (req, res, next) => {
-    if (req.body.password !== req.body.passwordCheck) throw new Error('Passwords do not match!')
-    User.findOne({ where: { email: req.body.email } })
-      .then(email => {
-        if (email) throw new Error('Email already exists!')
-        return bcrypt.hash(req.body.password, 10)
-      })
-      .then(hash => User.create({
-        name: req.body.name,
-        email: req.body.email,
-        password: hash
-      }))
-      .then(() => {
-        req.flash('success_messages', '成功註冊帳號！')
-        res.redirect('/signin')
-      }).catch(err => next(err)) // 接住前面拋出的錯誤，呼叫專門做錯誤處理的 middleware
-  },
+	signUp: (req, res, next) => {
+		userServices.signUp(req, (err, data) => {
+			if (err) return next(err)
+			req.flash('success_messages', '成功註冊帳號！')
+			req.session.createdData = data
+			return res.redirect('/signin')
+		})
+	},
+  // signUp: (req, res, next) => {
+  //   if (req.body.password !== req.body.passwordCheck) throw new Error('Passwords do not match!')
+  //   User.findOne({ where: { email: req.body.email } })
+  //     .then(email => {
+  //       if (email) throw new Error('Email already exists!')
+  //       return bcrypt.hash(req.body.password, 10)
+  //     })
+  //     .then(hash => User.create({
+  //       name: req.body.name,
+  //       email: req.body.email,
+  //       password: hash
+  //     }))
+  //     .then(() => {
+  //       req.flash('success_messages', '成功註冊帳號！')
+  //       res.redirect('/signin')
+  //     }).catch(err => next(err)) // 接住前面拋出的錯誤，呼叫專門做錯誤處理的 middleware
+  // },
   signInPage: (req, res) => {
     res.render('signin')
   },
